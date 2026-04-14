@@ -15,6 +15,8 @@
 - 📦 **归档机制**：查询结果可归档为独立页面，形成知识沉淀
 - 🔒 **权限分离**：TRAE（AI 写入）+ Obsidian（人类编辑）+ OpenClaw（只读消费）
 
+---
+
 ## 架构
 
 ```
@@ -37,34 +39,314 @@
      └──────────────────┘
 ```
 
-## 快速开始
+---
+
+## 安装
 
 ### 前置要求
 
-- [TRAE IDE](https://trae.ai/) v3.0+
-- [Obsidian](https://obsidian.md/)（最新版）
-- Python 3.8+
-- Git
+| 工具 | 版本 | 用途 |
+|------|------|------|
+| [TRAE IDE](https://trae.ai/) | v3.0+ | AI 知识库管理（核心） |
+| [Obsidian](https://obsidian.md/) | 最新版 | 知识库查看和编辑 |
+| Python | 3.8+ | 运行 Lint 脚本 |
+| Git | 任意 | 版本控制 |
 
-### 5 分钟上手
+> OpenClaw 为可选项，用于定时任务和只读查询。
+
+### 安装步骤
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/xmas-mz/llm-wiki.git
+git clone https://github.com/chris-zhang-uper/llm-wiki.git
 cd llm-wiki
 
 # 2. 在 TRAE IDE 中打开此项目
-#    TRAE 会自动加载 .trae/rules/project_rules.md
+#    文件 → 打开文件夹 → 选择 llm-wiki/
+#    TRAE 会自动加载 .trae/rules/project_rules.md 作为项目规则
 
-# 3. 运行验证（TRAE 中按 Ctrl+Shift+P → Tasks: Run Task → Wiki: 验证配置）
-
-# 4. 初始化示例数据（TRAE Task → Wiki: 初始化示例数据）
-
-# 5. 体验 Ingest（在 TRAE 对话中输入）：
-#    "处理 raw/demo/2026-04-04-karpathy-llm-wiki.md"
+# 3. 在 Obsidian 中打开此项目（可选，建议同时打开）
+#    打开文件夹 → 选择 llm-wiki/
 ```
 
-详细教程请阅读 [QUICKSTART.md](QUICKSTART.md)。
+### 安装完成后的状态
+
+安装完成后（尚未执行任何操作），你的知识库处于**空白初始状态**：
+
+```
+llm-wiki/
+├── raw/              ← 空目录，等待放入素材
+├── wiki/
+│   ├── index.md      ← 空索引（只有注释模板）
+│   └── log.md        ← 空日志（只有注释模板）
+└── pending/          ← 空目录，用于 Lint 待审建议
+```
+
+此时：
+- `raw/` 是空的，没有素材
+- `wiki/` 中只有空的 index.md 和 log.md
+- 知识库尚未开始运作
+
+**下一步**：运行验证 → 初始化示例 → 体验功能（见下方）。
+
+---
+
+## 验证安装
+
+安装完成后，按以下步骤验证一切正常：
+
+### 验证 1：TRAE 规则加载
+
+在 TRAE 对话中输入：
+
+```
+你是什么角色？
+```
+
+**预期回答**：TRAE 应回答自己是"知识库管理员"，并说明职责。如果回答不符合预期，说明 `.trae/rules/project_rules.md` 未被正确加载。
+
+### 验证 2：配置完整性
+
+在 TRAE 中按 `Ctrl+Shift+P`（Mac: `Cmd+Shift+P`），输入 `Tasks: Run Task`，选择 **Wiki: 验证配置**。
+
+**预期结果**：所有检查项显示 ✓：
+
+```
+📁 目录结构
+  ✓ raw/ 目录存在
+  ✓ wiki/ 目录存在
+  ✓ pending/ 目录存在
+  ✓ scripts/ 目录存在
+
+⚙️ TRAE 配置
+  ✓ .trae/rules/project_rules.md 存在
+  ✓ .trae/tasks.json 存在
+  ✓ .trae/settings.json 存在
+
+🎯 Skills
+  ✓ skills/ingest/SKILL.md 存在
+  ✓ skills/query/SKILL.md 存在
+  ✓ skills/archive/SKILL.md 存在
+  ✓ skills/lint/SKILL.md 存在
+
+🤖 Agents
+  ✓ agents/wiki-health-reporter.md 存在
+
+📝 Wiki 核心文件
+  ✓ wiki/index.md 存在
+  ✓ wiki/log.md 存在
+
+📦 Git 配置
+  ✓ .gitignore 存在
+  ✓ pending/ 已被忽略
+
+✓ 所有检查通过！知识库配置正确。
+```
+
+### 验证 3：命令行验证（可选）
+
+```bash
+python3 scripts/verify-config.py
+```
+
+应输出与上面相同的结果。
+
+---
+
+## 快速体验
+
+验证通过后，按以下 5 步体验知识库的完整工作流。
+
+### 第 1 步：初始化示例素材
+
+在 TRAE 中按 `Ctrl+Shift+P`，运行 **Wiki: 初始化示例数据** Task。
+
+这会在 `raw/demo/` 下创建 3 篇示例素材：
+- `2026-04-04-karpathy-llm-wiki.md` — Karpathy 原文介绍
+- `2026-04-10-community-wiki-implementation.md` — 社区实现方案
+- `2026-04-12-critique-llm-wiki.md` — 批判性分析（与前两篇有矛盾）
+
+> ⚠️ 此步骤只创建原始素材，不创建 wiki 页面。wiki 页面由你在下一步通过 Ingest 流程自行创建。
+
+### 第 2 步：体验 Ingest（摄入素材）
+
+在 TRAE 对话中输入：
+
+```
+处理 raw/demo/2026-04-04-karpathy-llm-wiki.md
+```
+
+**预期效果**：
+- TRAE 读取素材，与你讨论要点
+- 在 `wiki/demo/` 下创建新页面（如 `llm-wiki-pattern.md`）
+- 更新 `wiki/index.md`（添加新条目）和 `wiki/log.md`（追加记录）
+
+### 第 3 步：体验级联更新
+
+```
+处理 raw/demo/2026-04-10-community-wiki-implementation.md
+```
+
+**预期效果**：
+- 创建新页面（如 `wiki-implementation.md`）
+- **同时更新**第 2 步创建的页面（补充社区实践细节）
+- 在两个页面之间建立 `[[双向链接]]`
+- `wiki/log.md` 中出现 `- Updated: llm-wiki-pattern` 记录
+
+### 第 4 步：体验矛盾标注
+
+```
+处理 raw/demo/2026-04-12-critique-llm-wiki.md
+```
+
+**预期效果**：
+- 创建新页面（如 `llm-wiki-critique.md`）
+- **在已有页面中标注矛盾**（如："Karpathy 称维护成本接近零，但批判文章认为被低估"）
+- 矛盾以 `> ⚠️ **矛盾标注**：...` 格式呈现
+
+### 第 5 步：体验 Query 和 Lint
+
+```
+查询知识库中关于 LLM Wiki 维护成本的内容
+```
+
+**预期效果**：TRAE 综合多个页面回答，展示矛盾双方的观点，并询问是否归档。
+
+```
+执行 Lint
+```
+
+**预期效果**：TRAE 深度阅读所有 wiki 页面，报告发现的问题和建议。
+
+### 第 6 步：在 Obsidian 中查看
+
+1. 打开 Obsidian → 打开 `wiki/demo/` 目录
+2. 点击右上角**图谱视图**图标，查看页面之间的关联
+3. 打开 `wiki/index.md`，查看全局索引
+
+---
+
+## 功能使用指南
+
+### 功能一：摄入新素材（Ingest）
+
+**用途**：将文章、论文、笔记等素材编译为结构化的 Wiki 知识。
+
+**操作**：
+```
+处理 raw/<topic>/<文件名>.md
+```
+
+**TRAE 会自动执行**：
+1. 读取素材全文，提取关键信息
+2. 与你讨论要点（可说"跳过"）
+3. 创建或更新 Wiki 页面
+4. 检测矛盾并标注
+5. 级联更新受影响的已有页面
+6. 更新索引和日志
+
+**素材准备方式**：
+
+| 方式 | 操作 |
+|------|------|
+| Obsidian Web Clipper | 浏览器扩展 → 一键保存为 Markdown → 存入 `raw/<topic>/` |
+| 手动创建 | 在 `raw/<topic>/` 下创建 `YYYY-MM-DD-标题.md`，粘贴内容 |
+| 直接拖放 | 将文件拖入 `raw/<topic>/` 目录 |
+
+**素材文件格式**：
+```markdown
+---
+source: https://example.com/article
+collected: 2026-04-14
+published: 2026-04-10
+---
+
+# 文章标题
+
+（文章内容）
+```
+
+---
+
+### 功能二：查询知识库（Query）
+
+**用途**：基于已有知识综合回答问题。
+
+**操作**：
+```
+查询关于 XX 的内容
+```
+
+**TRAE 会自动执行**：
+1. 读取 `wiki/index.md` 定位相关页面
+2. 深入阅读相关页面
+3. 综合回答（附带引用）
+4. 如果回答有长期价值，询问是否归档
+
+---
+
+### 功能三：归档查询结果（Archive）
+
+**用途**：将有价值的查询结果保存为独立的 Wiki 页面。
+
+**操作**：
+```
+归档这个回答
+```
+
+**特点**：
+- 归档页面是 **point-in-time 快照**
+- 后续 Ingest 不会自动修改归档页面
+- 在索引中以 `[Archived]` 前缀标识
+
+---
+
+### 功能四：健康检查（Lint）
+
+**用途**：检查知识库的健康状态，发现矛盾、孤立页面、知识缺口。
+
+**操作**：
+```
+执行 Lint
+```
+
+**两层检查**：
+
+| 层级 | 方式 | 检查内容 |
+|------|------|----------|
+| Layer 1 | 自动（脚本） | 索引一致性、链接完整性、引用完整性 |
+| Layer 2 | 对话式（TRAE） | 语义矛盾、过时内容、知识缺口、新方向建议 |
+
+**Layer 1 也可通过 TRAE Task 执行**：`Ctrl+Shift+P` → **Wiki: 执行确定性 Lint**
+
+检查结果写入 `pending/` 目录，审阅后在 TRAE 中说"应用 Lint 建议"即可修复。
+
+---
+
+### 功能五：健康报告
+
+**用途**：生成知识库的统计概览和状态报告。
+
+**操作**：
+```
+生成健康报告
+```
+
+**报告内容**：页面总数、素材总数、最近活动、孤立页面、待处理建议。
+
+---
+
+### 常用命令速查
+
+| 你说的话 | TRAE 做的事 |
+|----------|-------------|
+| `处理 raw/xxx.md` | 执行 Ingest，编译素材到 Wiki |
+| `查询关于 XX 的内容` | 搜索 Wiki 并综合回答 |
+| `归档这个回答` | 将分析保存为 Wiki 页面 |
+| `执行 Lint` | 健康检查知识库 |
+| `生成健康报告` | 输出统计和状态报告 |
+
+---
 
 ## 目录结构
 
@@ -90,10 +372,19 @@ llm-wiki/
 │   ├── lint-deterministic.py     # 确定性 Lint
 │   ├── verify-config.py          # 配置验证
 │   └── init-examples.sh          # 示例初始化
+├── obsidian/                     # Obsidian 专用
+│   └── dashboard.md              # Dataview 仪表盘
 ├── openclaw-context.md           # OpenClaw 只读上下文
-├── QUICKSTART.md                 # 快速入门
-└── docs/deploy-guide.md          # 完整部署指南
+├── QUICKSTART.md                 # 快速入门（详细版）
+├── docs/
+│   ├── design-process.md         # 设计过程记录
+│   ├── architecture-spec.md      # 架构规格书
+│   └── deploy-guide.md           # 完整部署指南
+├── README.md                     # 本文档
+└── LICENSE                       # MIT 开源协议
 ```
+
+---
 
 ## 核心概念
 
@@ -113,6 +404,45 @@ llm-wiki/
 | **Query** | "查询"、"搜索" | 读索引 → 定位页面 → 综合回答 |
 | **Archive** | "归档"、"保存" | 将查询结果保存为 Wiki 页面 |
 | **Lint** | "lint"、"检查" | 确定性检查 + 语义深度分析 |
+
+---
+
+## 进阶配置
+
+### Obsidian 插件
+
+| 插件 | 用途 | 安装方式 |
+|------|------|----------|
+| [Dataview](https://github.com/blacksmithgu/obsidian-dataview) | 动态查询 Wiki 页面 | Obsidian → 第三方插件 → 搜索 "Dataview" |
+| [Web Clipper](https://obsidian.md/clipper) | 浏览器剪藏网页为 Markdown | [Chrome 扩展商店](https://chrome.google.com/webstore/detail/obsidian-web-clipper) |
+
+### OpenClaw 定时任务（可选）
+
+参考 [openclaw-context.md](openclaw-context.md) 配置：
+- 每日工作简报（每天 8:00）
+- 素材监控通知（每 2 小时）
+
+### 自定义规则
+
+根据你的领域调整 `.trae/rules/project_rules.md`，例如：
+- 修改 Wiki 页面格式规范
+- 添加领域特定的 topic 约定
+- 调整 LLM 行为偏好
+
+---
+
+## 文档索引
+
+| 文档 | 说明 |
+|------|------|
+| [README.md](README.md) | 项目主页（本文档） |
+| [QUICKSTART.md](QUICKSTART.md) | 详细快速入门教程 |
+| [docs/architecture-spec.md](docs/architecture-spec.md) | 完整架构规格书 |
+| [docs/design-process.md](docs/design-process.md) | 设计过程和决策记录 |
+| [docs/deploy-guide.md](docs/deploy-guide.md) | 完整部署指南 |
+| [openclaw-context.md](openclaw-context.md) | OpenClaw 配置参考 |
+
+---
 
 ## 致谢
 
