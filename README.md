@@ -48,11 +48,19 @@
 | 工具 | 版本 | 用途 |
 |------|------|------|
 | [TRAE IDE](https://trae.ai/) | v3.0+ | AI 知识库管理（核心） |
-| [Obsidian](https://obsidian.md/) | 最新版 | 知识库查看和编辑 |
+| [Obsidian](https://obsidian.md/) | 最新版 | 知识库查看和编辑（推荐） |
 | Python | 3.8+ | 运行 Lint 脚本 |
 | Git | 任意 | 版本控制 |
 
 > OpenClaw 为可选项，用于定时任务和只读查询。
+
+### 关于 Obsidian
+
+[Obsidian](https://obsidian.md/) 是一款免费的双链笔记软件，用于查看和编辑 LLM Wiki 生成的知识库。它提供图谱视图、双向链接导航和丰富的插件生态，是浏览 Wiki 内容的最佳界面。
+
+📥 **下载地址**：[https://obsidian.md/](https://obsidian.md/)（支持 Windows / macOS / Linux / iOS / Android）
+
+> 💡 Obsidian 是可选的。如果你只用 TRAE IDE，也可以直接在 TRAE 的文件浏览器中查看 `wiki/` 目录下的 Markdown 文件。但推荐同时使用 Obsidian，体验双向链接和图谱视图。
 
 ### 安装步骤
 
@@ -64,10 +72,53 @@ cd llm-wiki
 # 2. 在 TRAE IDE 中打开此项目
 #    文件 → 打开文件夹 → 选择 llm-wiki/
 #    TRAE 会自动加载 .trae/rules/project_rules.md 作为项目规则
-
-# 3. 在 Obsidian 中打开此项目（可选，建议同时打开）
-#    打开文件夹 → 选择 llm-wiki/
 ```
+
+### 配置 Obsidian 读取 LLM Wiki
+
+如果你选择使用 Obsidian，按以下步骤配置：
+
+**第 1 步：打开知识库文件夹**
+
+1. 打开 Obsidian
+2. 点击 **"打开文件夹作为仓库"**
+3. 选择你克隆的 `llm-wiki/` 文件夹
+4. 打开后，左侧文件浏览器会显示项目目录
+
+**第 2 步：查看 Wiki 内容**
+
+- 点击 `wiki/` 目录，查看 LLM 生成的知识页面
+- 点击 `wiki/index.md`，查看全局索引（所有页面的入口）
+- 点击任意 Wiki 页面，查看内容
+
+**第 3 步：使用图谱视图（推荐）**
+
+1. 点击左侧边栏的 **"图谱视图"** 图标（或按 `Ctrl+G`）
+2. 你会看到所有 Wiki 页面之间的关联关系
+3. 节点越大表示被引用越多，孤立节点说明缺少关联
+
+**第 4 步：跟随双向链接**
+
+Wiki 页面中使用 `[[页面名称]]` 格式创建双向链接。在 Obsidian 中：
+- 点击 `[[链接]]` 可直接跳转到对应页面
+- 鼠标悬停在链接上可预览内容（无需离开当前页面）
+
+**第 5 步：安装推荐插件（可选）**
+
+| 插件 | 用途 | 安装方式 |
+|------|------|----------|
+| Dataview | 动态查询 Wiki 页面（如列出所有标签、最近更新的页面） | 设置 → 第三方插件 → 关闭安全模式 → 搜索 "Dataview" → 安装 |
+| Web Clipper | 浏览器一键保存网页为 Markdown 到 `raw/` | [Chrome 扩展商店](https://chrome.google.com/webstore/detail/obsidian-web-clipper) 安装 |
+
+> 💡 安装 Dataview 后，打开 `obsidian/dashboard.md` 可查看知识库仪表盘。
+
+**常见问题**：
+
+| 问题 | 解决方法 |
+|------|----------|
+| 打开后看不到 Wiki 页面 | 正常，`wiki/` 初始为空，需要先在 TRAE 中执行 Ingest |
+| 图谱视图是空的 | 同上，执行 Ingest 后页面会自动出现在图谱中 |
+| 想手动编辑 Wiki 页面 | 直接在 Obsidian 中编辑即可，TRAE 会在下次操作时感知变化 |
 
 ### 安装完成后的状态
 
