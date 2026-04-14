@@ -1,0 +1,31 @@
+{
+  "editor.fontSize": 14,
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "editor.minimap.enabled": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
+  "files.autoSave": "onFocusChange",
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/.git/**": true,
+    "**/pending/**": true,
+    "**/__pycache__/**": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/package-lock.json": true,
+    "**/dist": true,
+    "**/pending": true,
+    "**/__pycache__": true
+  },
+  "terminal.integrated.fontSize": 13,
+  "git.autofetch": true,
+  "trae.ai.enabled": true,
+  "trae.rules.autoLoad": true,
+  "trae.ai.codeIndex.enabled": true,
+  "trae.ai.codeIndex.autoBuild": true
+}

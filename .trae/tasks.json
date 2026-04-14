@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Wiki: 执行确定性 Lint",
+      "type": "shell",
+      "command": "python3",
+      "args": ["${workspaceFolder}/scripts/lint-deterministic.py"],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Wiki: 验证配置",
+      "type": "shell",
+      "command": "python3",
+      "args": ["${workspaceFolder}/scripts/verify-config.py"],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Wiki: 初始化示例数据",
+      "type": "shell",
+      "command": "bash",
+      "args": ["${workspaceFolder}/scripts/init-examples.sh"],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Wiki: 生成健康报告",
+      "type": "shell",
+      "command": "echo",
+      "args": ["请在 TRAE 对话中说：生成健康报告"],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
