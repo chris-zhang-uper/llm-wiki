@@ -48,6 +48,18 @@
         "panel": "shared"
       },
       "problemMatcher": []
+    },
+    {
+      "label": "Wiki: 转换文件为 Markdown",
+      "type": "shell",
+      "command": "python3",
+      "args": ["${workspaceFolder}/scripts/convert-to-raw.py"],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
     }
   ]
 }

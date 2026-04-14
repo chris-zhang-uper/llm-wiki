@@ -303,6 +303,35 @@ python3 scripts/verify-config.py
 | Obsidian Web Clipper | 浏览器扩展 → 一键保存为 Markdown → 存入 `raw/<topic>/` |
 | 手动创建 | 在 `raw/<topic>/` 下创建 `YYYY-MM-DD-标题.md`，粘贴内容 |
 | 直接拖放 | 将文件拖入 `raw/<topic>/` 目录 |
+| **格式转换** | 使用转换脚本将 PDF/DOCX 等转为 Markdown（见下方） |
+
+**支持的素材格式**：
+
+| 格式 | 支持方式 | 说明 |
+|------|----------|------|
+| .md | ✅ 直接使用 | Markdown 文件，直接放入 `raw/<topic>/` |
+| .txt | ✅ 直接使用 | 纯文本，TRAE 可直接读取 |
+| .pdf | ✅ 转换后使用 | 需运行转换脚本（依赖 `pdfplumber`） |
+| .docx | ✅ 转换后使用 | 需运行转换脚本（依赖 `python-docx`） |
+| .doc | ⚠️ 转换后使用 | 需安装 LibreOffice 或 antiword |
+| .html | ✅ 转换后使用 | 需运行转换脚本，或使用 Obsidian Web Clipper |
+
+**格式转换方法**：
+
+```bash
+# 1. 安装依赖（首次使用）
+pip install pdfplumber python-docx --break-system-packages
+
+# 2. 转换单个文件
+python3 scripts/convert-to-raw.py paper.pdf --topic research
+
+# 3. 转换整个目录
+python3 scripts/convert-to-raw.py ./downloads/ --topic work
+
+# 4. 也可在 TRAE 中按 Ctrl+Shift+P → Wiki: 转换文件为 Markdown
+```
+
+转换后的 Markdown 文件会自动保存到 `raw/<topic>/` 目录，之后正常使用 Ingest 流程处理即可。
 
 **素材文件格式**：
 ```markdown
