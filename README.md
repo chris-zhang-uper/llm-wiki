@@ -315,21 +315,38 @@ python3 scripts/verify-config.py
 | .docx | ✅ 转换后使用 | 需运行转换脚本（依赖 `python-docx`） |
 | .doc | ⚠️ 转换后使用 | 需安装 LibreOffice 或 antiword |
 | .html | ✅ 转换后使用 | 需运行转换脚本，或使用 Obsidian Web Clipper |
+| .mp3/.m4a/.wav | ✅ 转换后使用 | 音频文件，自动语音转文字（依赖 `whisper`） |
+| .mp4/.mkv/.webm | ✅ 转换后使用 | 视频文件，提取音频后转文字（依赖 `ffmpeg` + `whisper`） |
+| **视频链接** | ✅ 转换后使用 | YouTube/Bilibili/抖音/TikTok/西瓜视频（依赖 `yt-dlp`） |
+| **音频链接** | ✅ 转换后使用 | 喜马拉雅等平台（依赖 `yt-dlp`） |
 
 **格式转换方法**：
 
 ```bash
-# 1. 安装依赖（首次使用）
-pip install pdfplumber python-docx --break-system-packages
+# 1. 安装基础依赖（文档转换）
+pip install pdfplumber python-docx yt-dlp --break-system-packages
 
-# 2. 转换单个文件
+# 2. 安装音视频转录依赖（可选，处理视频/音频时需要）
+pip install openai-whisper --break-system-packages
+# Ubuntu: sudo apt install ffmpeg
+# macOS: brew install ffmpeg
+
+# 3. 转换文件
 python3 scripts/convert-to-raw.py paper.pdf --topic research
 
-# 3. 转换整个目录
-python3 scripts/convert-to-raw.py ./downloads/ --topic work
+# 4. 转换视频链接
+python3 scripts/convert-to-raw.py "https://www.youtube.com/watch?v=xxx" --topic ai
 
-# 4. 也可在 TRAE 中按 Ctrl+Shift+P → Wiki: 转换文件为 Markdown
+# 5. 转换 B 站视频
+python3 scripts/convert-to-raw.py "https://www.bilibili.com/video/BV1xx" --topic tutorial
+
+# 6. 转换音频文件
+python3 scripts/convert-to-raw.py podcast.mp3 --topic podcast
+
+# 7. 也可在 TRAE 中按 Ctrl+Shift+P → Wiki: 转换文件为 Markdown
 ```
+
+> 💡 **视频/音频转换策略**：优先提取平台字幕（最快，秒级完成）→ 字幕不可用时下载音频用 Whisper 转录（较慢，需要 GPU 或较长时间）。建议优先选择有字幕的视频。
 
 转换后的 Markdown 文件会自动保存到 `raw/<topic>/` 目录，之后正常使用 Ingest 流程处理即可。
 

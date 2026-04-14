@@ -1,6 +1,6 @@
 ---
 name: ingest
-description: 处理 raw/ 目录中的新素材，编译为 wiki 页面。支持 PDF/DOCX/DOC/TXT/HTML/Markdown 格式。触发词：处理、摄入、ingest、添加到知识库
+description: 处理 raw/ 目录中的新素材，编译为 wiki 页面。支持 PDF/DOCX/DOC/TXT/HTML/视频链接/音频链接/Markdown 格式。触发词：处理、摄入、ingest、添加到知识库
 ---
 
 # Ingest 操作流程
@@ -9,33 +9,38 @@ description: 处理 raw/ 目录中的新素材，编译为 wiki 页面。支持 
 
 用户说："处理 raw/xxx"、"摄入新素材"、"把这个加到知识库"
 
-支持的文件格式：
-- `.md` / `.markdown` — Markdown（直接处理）
-- `.txt` — 纯文本（直接处理）
-- `.pdf` — PDF 文档（自动转换）
-- `.docx` — Word 文档（自动转换）
-- `.doc` — Word 文档（自动转换，需 LibreOffice）
-- `.html` / `.htm` — 网页（自动转换）
+支持的输入类型：
+- **文件**：`.md` `.txt` `.pdf` `.docx` `.doc` `.html` `.mp3` `.m4a` `.wav` `.flac` `.mp4` `.mkv` `.webm`
+- **链接**：YouTube / Bilibili / 抖音 / TikTok / 西瓜视频 / 喜马拉雅 等平台链接
 
 ## 操作步骤
 
 ### 0. 格式检测与自动转换 ⭐
 
-当用户指定的文件不是 Markdown 格式时，**自动执行转换**，用户无需手动操作：
+当用户指定的输入不是 Markdown 格式时，**自动执行转换**，用户无需手动操作：
 
+**如果是文件路径**：
 1. 检查文件扩展名
-2. 如果是 `.pdf`、`.docx`、`.doc`、`.txt`、`.html`：
+2. 如果是 `.pdf`、`.docx`、`.doc`、`.txt`、`.html`、`.mp3`、`.mp4` 等非 Markdown 格式：
    - 运行转换命令：`python3 scripts/convert-to-raw.py <文件路径> --topic <topic>`
    - 等待转换完成，获取生成的 Markdown 文件路径
    - 告知用户："已自动将 PDF 转换为 Markdown：raw/<topic>/YYYY-MM-DD-xxx.md"
 3. 如果是 `.md`：直接读取，跳过此步骤
-4. 如果格式不支持：告知用户并建议先手动转换
+
+**如果是视频/音频链接**：
+1. 检测输入是否为 URL（以 http:// 或 https:// 开头）
+2. 如果是视频/音频平台链接：
+   - 运行转换命令：`python3 scripts/convert-to-raw.py "<URL>" --topic <topic>`
+   - 转换策略：优先提取平台字幕 → 字幕不可用时下载音频用 Whisper 转录
+   - 等待转换完成，获取生成的 Markdown 文件路径
+   - 告知用户："已自动将视频转换为 Markdown：raw/<topic>/YYYY-MM-DD-xxx.md"
+3. 如果是普通网页链接：建议用户使用 Obsidian Web Clipper 保存
 
 **转换依赖**：
-- PDF：`pdfplumber`（`pip install pdfplumber --break-system-packages`）
-- DOCX：`python-docx`（`pip install python-docx --break-system-packages`）
-- DOC：LibreOffice 或 antiword
-- TXT/HTML：无额外依赖
+- 文档：`pdfplumber`、`python-docx`（`pip install pdfplumber python-docx --break-system-packages`）
+- 视频/音频链接：`yt-dlp`（`pip install yt-dlp --break-system-packages`）
+- 语音转录：`openai-whisper`（`pip install openai-whisper --break-system-packages`）
+- 视频提取：`ffmpeg`（`sudo apt install ffmpeg`）
 
 如果依赖未安装，告知用户安装命令。
 
