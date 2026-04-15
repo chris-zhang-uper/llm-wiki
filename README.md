@@ -74,6 +74,34 @@ cd llm-wiki
 #    TRAE 会自动加载 .trae/rules/project_rules.md 作为项目规则
 ```
 
+### 远程服务器部署（可选）
+
+如果你有远程服务器，可以将 LLM Wiki 部署在服务器上，获得以下优势：
+
+| 优势 | 说明 |
+|------|------|
+| 🚀 GPU 加速 | 服务器 GPU 让音视频转录速度提升 10-50 倍 |
+| 🔄 24h 运行 | OpenClaw 定时任务无需本地电脑开机 |
+| 👥 团队协作 | 多人通过 TRAE 远程访问同一知识库 |
+| 📱 多设备访问 | 任何设备通过 TRAE 远程连接访问 |
+
+**快速部署**：
+
+```bash
+# 1. 在 TRAE 中连接远程服务器
+#    左侧边栏 → 远程资源管理器 → 添加 SSH 主机 → ssh user@server-ip
+
+# 2. 在远程服务器终端中执行
+sudo apt update && sudo apt install -y python3 python3-pip git ffmpeg
+pip3 install pdfplumber python-docx yt-dlp --break-system-packages
+git clone https://github.com/chris-zhang-uper/llm-wiki.git
+
+# 3. 在 TRAE 中打开远程项目
+#    打开文件夹 → 选择服务器上的 ~/llm-wiki/
+```
+
+详细指南请阅读 [docs/deploy-guide.md](docs/deploy-guide.md)。
+
 ### 配置 Obsidian 读取 LLM Wiki
 
 如果你选择使用 Obsidian，按以下步骤配置：
