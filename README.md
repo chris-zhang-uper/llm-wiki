@@ -73,10 +73,15 @@ llm-wiki/
 ├── .trae/                        # TRAE IDE 配置
 │   ├── rules/project_rules.md    # 核心规则（持续加载）
 │   ├── skills/                   # 操作技能（按需加载）
-│   │   ├── ingest/SKILL.md       # 摄入新素材
-│   │   ├── query/SKILL.md        # 查询知识库
-│   │   ├── archive/SKILL.md      # 归档查询结果
-│   │   └── lint/SKILL.md         # 健康检查
+│   │   ├── obsidian-cli/        # Obsidian CLI 交互
+│   │   ├── obsidian-markdown/   # Obsidian Markdown 语法
+│   │   ├── obsidian-bases/      # Obsidian 数据库功能
+│   │   ├── json-canvas/         # JSON Canvas 可视化
+│   │   ├── defuddle/            # 网页内容提取
+│   │   ├── ingest/SKILL.md      # 摄入新素材
+│   │   ├── query/SKILL.md       # 查询知识库
+│   │   ├── archive/SKILL.md     # 归档查询结果
+│   │   └── lint/SKILL.md        # 健康检查
 │   ├── agents/                   # 独立 Agent
 │   │   └── wiki-health-reporter.md
 │   ├── settings.json             # TRAE 性能配置
@@ -114,6 +119,62 @@ llm-wiki/
 | **Archive** | "归档"、"保存" | 将查询结果保存为 Wiki 页面 |
 | **Lint** | "lint"、"检查" | 确定性检查 + 语义深度分析 |
 
+## Obsidian Skills
+
+本项目集成了一套基于 [obsidian-skills](https://github.com/chris-zhang-uper/obsidian-skills) 的 TRAE IDE Skills，专门用于增强 Obsidian 知识库的 AI 辅助管理能力。
+
+### 内置 Skills
+
+| Skill | 功能 | 使用场景 |
+|-------|------|----------|
+| **obsidian-cli** | 通过 Obsidian CLI 与 Vault 交互 | 读、写、搜索、管理 Obsidian 笔记 |
+| **obsidian-markdown** | Obsidian 风格 Markdown 语法 | 创建wikilinks、callouts、properties 等 |
+| **obsidian-bases** | Obsidian 数据库功能 | 创建 table/cards/list/map 视图 |
+| **json-canvas** | JSON Canvas 可视化画布 | 创建思维导图、流程图 |
+| **defuddle** | 网页内容提取 | 从网页提取干净 Markdown |
+
+### 快速开始
+
+#### 前置要求
+
+1. 安装 [Obsidian](https://obsidian.md/) 并启用 CLI：
+   - 设置 → 关于 → 开启「启动时启动 Obsidian CLI」
+   - 将 `obsidian` 命令添加到系统 PATH
+
+2. 在 TRAE IDE 中打开 LLM Wiki 项目
+
+#### 使用示例
+
+```bash
+# 读取笔记
+obsidian read file="笔记名称" silent
+
+# 创建笔记
+obsidian create name="新笔记" content="# 标题" silent
+
+# 搜索内容
+obsidian search query="关键词" limit=10 silent
+
+# 列出所有标签
+obsidian tags sort=count counts silent
+```
+
+### 配置文件
+
+Obsidian CLI 默认读取最近聚焦的仓库。如需指定仓库，使用 `vault` 参数：
+
+```bash
+obsidian vault="My_LLM_wiki" search query="关键词"
+```
+
+> **注意**：首次使用需确保 Obsidian 正在运行，且 CLI 已正确配置。
+
+### 相关资源
+
+- [Obsidian CLI 官方文档](https://help.obsidian.md/cli)
+- [obsidian-skills GitHub](https://github.com/chris-zhang-uper/obsidian-skills)
+- [Obsidian Flavors Markdown](https://help.obsidian.md/obsidian-flavored-markdown)
+
 ## 致谢
 
 - [Andrej Karpathy](https://github.com/karpathy) — 提出 LLM Wiki 模式
@@ -121,6 +182,7 @@ llm-wiki/
 - [TRAE IDE](https://trae.ai/) — AI 原生开发环境
 - [Obsidian](https://obsidian.md/) — 知识库查看和编辑
 - [OpenClaw](https://open-claw.me/) — AI 助手和定时任务
+- [chris-zhang-uper/obsidian-skills](https://github.com/chris-zhang-uper/obsidian-skills) — Obsidian Skills 集成
 
 ## License
 
