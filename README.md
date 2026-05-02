@@ -572,31 +572,101 @@ llm-wiki/
 | **json-canvas** | JSON Canvas 可视化画布 | 创建思维导图、流程图 |
 | **defuddle** | 网页内容提取 | 从网页提取干净 Markdown |
 
-### 快速开始
+---
 
-#### 前置要求
+### 安装与部署
 
-1. 安装 [Obsidian](https://obsidian.md/) 并启用 CLI：
-   - 设置 → 关于 → 开启「启动时启动 Obsidian CLI」
-   - 将 `obsidian` 命令添加到系统 PATH
+本项目的 Obsidian Skills 已内置在 `.trae/skills/` 目录下，TRAE IDE 会自动加载。
 
-2. 在 TRAE IDE 中打开 LLM Wiki 项目
+#### 步骤 1：安装 Obsidian
 
-#### 使用示例
+1. 下载并安装 [Obsidian](https://obsidian.md/)（建议使用最新版本）
+2. 打开 Obsidian，创建或打开你的 Vault（知识库）
+
+#### 步骤 2：启用 Obsidian CLI
+
+1. 在 Obsidian 中打开 **设置** → **关于**
+2. 找到 **"启动时启动 Obsidian CLI"** 选项，勾选启用
+3. 确保 Obsidian 在后台运行（最小化即可）
+
+#### 步骤 3：在 TRAE 中配置（可选）
+
+如果需要指定 Vault 名称，可在 `.trae/rules/project_rules.md` 中添加配置：
+
+```markdown
+# Obsidian 配置
+- Vault 名称: My_LLM_wiki
+- CLI 路径: obsidian (已在 PATH 中)
+```
+
+#### 步骤 4：验证安装
+
+在 TRAE 中测试以下命令：
 
 ```bash
-# 读取笔记
+# 列出所有标签
+obsidian tags sort=count counts silent
+
+# 搜索内容
+obsidian search query="测试" limit=5 silent
+```
+
+---
+
+### 使用示例
+
+#### 读写笔记
+
+```bash
+# 读取笔记 (静默模式，不打开窗口)
 obsidian read file="笔记名称" silent
 
 # 创建笔记
-obsidian create name="新笔记" content="# 标题" silent
+obsidian create name="新笔记" content="# 标题\n内容" silent
 
-# 搜索内容
+# 追加内容
+obsidian append file="笔记名称" content="\n新段落" silent
+
+# 修改属性
+obsidian property:set name="status" value="done" file="笔记名称" silent
+```
+
+#### 搜索与查询
+
+```bash
+# 全文搜索
 obsidian search query="关键词" limit=10 silent
 
-# 列出所有标签
+# 标签搜索 (推荐)
 obsidian tags sort=count counts silent
+
+# 反向链接
+obsidian backlinks file="笔记名称" silent
 ```
+
+#### 指定 Vault
+
+如果同时管理多个 Vault，使用 `vault` 参数：
+
+```bash
+# 指定 Vault
+obsidian vault="My_LLM_wiki" search query="关键词"
+
+# 读取指定 Vault 的笔记
+obsidian vault="My_LLM_wiki" read file="笔记名称" silent
+```
+
+#### 每日笔记
+
+```bash
+# 读取今日日记
+obsidian daily:read silent
+
+# 追加日记
+obsidian daily:append content="- [ ] 新任务" silent
+```
+
+---
 
 ### 配置文件
 
@@ -607,6 +677,21 @@ obsidian vault="My_LLM_wiki" search query="关键词"
 ```
 
 > **注意**：首次使用需确保 Obsidian 正在运行，且 CLI 已正确配置。
+
+---
+
+### 常见问题
+
+**Q: 提示 "obsidian 命令找不到"？**
+> A: 确保 Obsidian CLI 已启用，并在终端中重新登录或重启 TRAE。
+
+**Q: 提示 "无法连接到主进程"？**
+> A: 确保 Obsidian 正在运行，且版本是最新版本。
+
+**Q: 如何指定默认 Vault？**
+> A: 在每个命令中使用 `vault="你的Vault名称"` 参数。
+
+---
 
 ### 相关资源
 
